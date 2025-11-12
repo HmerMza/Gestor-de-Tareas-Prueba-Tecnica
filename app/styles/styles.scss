@@ -5,9 +5,22 @@ body {
   color: react.$text-primary;
 }
 
-.theme-section {
+.tasks-section {
   background: react.$background;
   color: react.$text-primary;
+  display: flex;
+    flex-direction: row;
+    gap: 3rem;
+    width: 50.5rem;
+    min-height: 25rem;
+    align-items: center;
+    justify-content: space-around;
+  }
+  
+  .task-done {
+    width: 23rem;
+    display: flex;
+    flex-direction: row;
 }
 
 :root {

@@ -1,5 +1,5 @@
 .title {
-  color: #8b0a6a;
+  color: #b40c8a;
   font-size: 2rem;
   font-weight: 600;
 }
@@ -14,10 +14,14 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
 }
 
+.containertext {
+  display: flex;
+  gap: 2rem
+}
 .footer {
   display: flex;
   flex: 1;
@@ -41,4 +45,8 @@
 .logo {
   height: 1em;
   margin-left: 0.5rem;
+}
+.cardtile {
+  width: 22.5rem;
+  margin: 0.6rem;
 }
