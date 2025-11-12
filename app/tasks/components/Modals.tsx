@@ -27,6 +27,11 @@ const Modals = () => {
     reset();
   };
 
+  const closeModal = () => {
+    setOpenModal(false);
+    reset();
+  };
+
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Button onClick={() => setOpenModal(true)}>Nueva Tarea</Button>
@@ -34,9 +39,9 @@ const Modals = () => {
         aria-label="Modal content"
         closeButtonLabel="cerrar"
         modalHeading="Agregar nueva tarea"
-        onRequestClose={() => setOpenModal(false)}
+        onRequestClose={closeModal}
         onRequestSubmit={handleSubmit(onSubmit)}
-        onSecondarySubmit={() => setOpenModal(false)}
+        onSecondarySubmit={closeModal}
         open={openModal}
         primaryButtonText={isPending ? "Agregando..." : "Agregar"}
         secondaryButtonText="Cancelar"
