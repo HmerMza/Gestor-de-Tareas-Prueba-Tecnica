@@ -1,20 +1,15 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { getTask } from "../actions/getTasks";
 import { Theme } from "@carbon/react";
 import Cards from "../components/Cards";
-import { Task } from "../types";
+import { useGetTasks } from "../hooks/useGetTask";
 
 const TaskViews = () => {
-  const [task, setTask] = useState<Task[]>([]);
-  const { data, isLoading } = useQuery({
-    queryFn: async () => await getTask(),
-    queryKey: ["tasks"],
-  });
+  const { data, isLoading, isError } = useGetTasks();
 
   if (isLoading) return <p>cargando</p>;
   if (!data) return <p>No hay datos disponibles</p>;
+  if (isError) return <p>Ocurrió un error al cargar las tareas.</p>;
+  if (!data || data.length === 0) return <p>No hay tareas disponibles.</p>;
 
   const theme = "g100";
 
@@ -25,7 +20,7 @@ const TaskViews = () => {
           <div className="tasks-done">
             <h4>Tareas Nuevas</h4>
             {data
-              .filter((ta) => !ta.done) // solo las tareas pendientes
+              .filter((ta) => !ta.done) 
               .map((t) => (
                 <Cards
                   key={t.id}
@@ -39,7 +34,7 @@ const TaskViews = () => {
           <div className="tasks-done">
             <h4>Tareas Completadas</h4>
             {data
-              .filter((ta) => ta.done) // solo las tareas pendientes
+              .filter((ta) => ta.done)
               .map((t) => (
                 <Cards
                   key={t.id}

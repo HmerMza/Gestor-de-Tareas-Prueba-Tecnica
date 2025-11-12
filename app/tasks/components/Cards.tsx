@@ -1,8 +1,6 @@
 import { Checkbox, Tile } from "@carbon/react";
 import styles from "@/app/styles/Home.module.css";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import updateTasks from "../actions/updateTask";
-import { Task } from "../types";
+import { useUpdateTask } from "../hooks";
 
 interface Props {
   title: string;
@@ -12,29 +10,7 @@ interface Props {
 }
 
 const Cards = ({ title, description, id, done }: Props) => {
-  const queryClient = useQueryClient();
-  const updateTask = useMutation({
-    mutationFn: updateTasks,
-    onError: (error) => {
-      alert(error.message);
-    },
-    onSuccess: (data) => {
-      queryClient.setQueryData(["tasks"], (prev: Task[] | undefined) => {
-        if (!prev) {
-          return [];
-        }
-        return prev.map((task) => {
-          if (task.id === id) {
-            return {
-              ...task,
-              done: data?.done,
-            };
-          }
-          return task;
-        });
-      });
-    },
-  });
+  const { mutate, isPending } = useUpdateTask();
   return (
     <Tile
       className={styles.cardtile}
@@ -43,9 +19,10 @@ const Cards = ({ title, description, id, done }: Props) => {
           checked={done}
           className="ai-label-container"
           id={title}
-          labelText="completado"
+          labelText={isPending ? "Actualizando..." : "Completado"}
+          disabled={isPending}
           onChange={() => {
-            updateTask.mutate({ id, done });
+            mutate({ id, done });
           }}
         />
       }

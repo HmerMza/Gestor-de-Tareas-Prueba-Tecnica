@@ -9,9 +9,8 @@ export const getTask = async () => {
         .from('tasks')
         .select('*');
 
-    if (error) {
-        console.error('Error fetching tasks:', error);
-        return null;
+    if (error || !tasks) {
+        throw new Error(error?.message || "No se pudo crear la tarea");
     }
 
     return tasks as Task[];

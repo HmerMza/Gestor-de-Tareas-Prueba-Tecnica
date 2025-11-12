@@ -7,7 +7,7 @@ const addTasks = async ({
 }: {
     title: string;
     description: string;
-}): Promise<Task | null> => {
+    }): Promise<Task> => {
     const supabase = createClient();
     const { data, error } = await supabase
         .from('tasks')
@@ -15,12 +15,11 @@ const addTasks = async ({
             { title, description },
         ])
         .select().single();
-    if (error) {
-        console.log("Error updating task:", error);
-        return null;
+    if (error || !data) {
+        throw new Error(error?.message || "No se pudo crear la tarea");
     }
 
     return data as Task;
 }
 
-export default addTasks
+export default addTasks;
