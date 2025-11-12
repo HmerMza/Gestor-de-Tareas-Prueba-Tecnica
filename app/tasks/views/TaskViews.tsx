@@ -1,17 +1,18 @@
 "use client";
-import { Theme } from "@carbon/react";
+import {Theme } from "@carbon/react";
 import Cards from "../components/Cards";
 import { useGetTasks } from "../hooks/useGetTask";
+import Skeleton from "../components/Skeleton";
 
 const TaskViews = () => {
   const { data, isLoading, isError } = useGetTasks();
 
-  if (isLoading) return <p>cargando</p>;
+  if (isLoading) return <Skeleton />
   if (!data) return <p>No hay datos disponibles</p>;
   if (isError) return <p>Ocurrió un error al cargar las tareas.</p>;
   if (!data || data.length === 0) return <p>No hay tareas disponibles.</p>;
 
-  const theme = "g100";
+  const theme = "g90";
 
   return (
     <>
@@ -20,7 +21,7 @@ const TaskViews = () => {
           <div className="tasks-done">
             <h4>Tareas Nuevas</h4>
             {data
-              .filter((ta) => !ta.done) 
+              .filter((ta) => !ta.done)
               .map((t) => (
                 <Cards
                   key={t.id}

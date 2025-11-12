@@ -10,7 +10,7 @@ export const useAddTask = () => {
     const mutation = useMutation({
         mutationFn: addTasks,
         onError: (error: Error) => {
-            alert(error.message || "Error al agregar la tarea");
+            console.error("Error adding task:", error);
         },
         onSuccess: (data: Task) => {
             if (!data) return;

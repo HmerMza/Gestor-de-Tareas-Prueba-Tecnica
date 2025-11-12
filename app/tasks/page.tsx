@@ -10,7 +10,6 @@ const Home: React.FC = () => {
           <h3 className={styles.title}>Gestion de Tareas</h3>
           <Modals />
         </div>
-
         <TaskViews />
       </main>
 
