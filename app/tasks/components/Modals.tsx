@@ -3,6 +3,8 @@
 import { Button, Form, Modal, TextArea, TextInput } from "@carbon/react";
 import { useState } from "react";
 import { Task } from "../types";
+import addTasks from "../actions/addTasks";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   tasks: Task[];
@@ -10,16 +12,29 @@ interface Props {
 }
 
 const Modals = ({ tasks, setTasks }: Props) => {
+  const queryClient = useQueryClient();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
 
-  const addTask = (title: string, description: string) => {
-    setTasks((prev) => [
-      ...prev,
-      { id: (tasks.length + 1).toString(), title, description, done: false },
-    ]);
+  const addTaskMutation = useMutation({
+    mutationFn: addTasks,
+
+    onError: (error) => {
+      alert(error.message);
+    },
+
+    onSuccess: (data) => {
+      if (!data) return;
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+
+  const clearInputs = () => {
+    setTitle("");
+    setDescription("");
   };
+
   return (
     <Form>
       <Button onClick={() => setOpenModal(true)}>Nueva Tarea</Button>
@@ -28,7 +43,11 @@ const Modals = ({ tasks, setTasks }: Props) => {
         closeButtonLabel="cerrar"
         modalHeading="Agregar nueva tarea"
         onRequestClose={() => setOpenModal(false)}
-        onRequestSubmit={() => addTask(title, description)}
+        onRequestSubmit={() => {
+          addTaskMutation.mutate({ title, description });
+          setOpenModal(false);
+          clearInputs();
+        }}
         onSecondarySubmit={() => setOpenModal(false)}
         open={openModal}
         primaryButtonText="Agregar"
