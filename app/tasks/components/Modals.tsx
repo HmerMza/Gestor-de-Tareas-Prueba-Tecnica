@@ -3,34 +3,39 @@
 import { Button, Form, Modal, TextArea, TextInput } from "@carbon/react";
 import { useState } from "react";
 import { useAddTask } from "../hooks";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TaskFormData, taskSchema } from "../schemas/taskSchema";
 
 const Modals = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-
   const { mutate, isPending } = useAddTask();
 
-  const clearInputs = () => {
-    setTitle("");
-    setDescription("");
-  };
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<TaskFormData>({
+    resolver: zodResolver(taskSchema),
+    mode: "onBlur",
+  });
 
-  const handleSubmit = () => {
-    mutate({ title, description });
+  const onSubmit = (data: TaskFormData) => {
+    mutate(data);
     setOpenModal(false);
-    clearInputs();
+    reset();
   };
 
   return (
-    <Form>
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <Button onClick={() => setOpenModal(true)}>Nueva Tarea</Button>
       <Modal
         aria-label="Modal content"
         closeButtonLabel="cerrar"
         modalHeading="Agregar nueva tarea"
         onRequestClose={() => setOpenModal(false)}
-        onRequestSubmit={handleSubmit}
+        onRequestSubmit={handleSubmit(onSubmit)}
         onSecondarySubmit={() => setOpenModal(false)}
         open={openModal}
         primaryButtonText={isPending ? "Agregando..." : "Agregar"}
@@ -44,21 +49,20 @@ const Modals = () => {
           Porfavor ingrese un nombre y una descripcion para la nueva tarea.
         </p>
         <TextInput
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          data-modal-primary-focus
           id="name-task"
           labelText="Nombre"
           placeholder="Por ejemplo, Sacar la basura"
-          style={{
-            marginBottom: "24px",
-          }}
+          data-modal-primary-focus
+          {...register("title")}
+          invalid={!!errors.title}
+          invalidText={errors.title?.message}
         />
         <TextArea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          labelText="Descripcion"
-          placeholder="Por Ejemplo, recojer los papeles de la sala."
+          labelText="Descripción"
+          placeholder="Por ejemplo, recoger los papeles de la sala."
+          {...register("description")}
+          invalid={!!errors.description}
+          invalidText={errors.description?.message}
         />
       </Modal>
     </Form>
